@@ -1,47 +1,33 @@
 "use client";
 
-import { useState } from "react";
-import LeaveForm, {
-    LeaveFormData,
-} from "@/components/leave/LeaveForm";
+import { useEffect } from "react";
+import { useAppDispatch, useAppSelector } from "@/store/hook";
+import { fetchLeaves, createLeave } from "@/modules/leave/leave.actions";
 import LeaveCalendar from "@/components/leave/LeaveCalendar";
-import { LeaveItem, mockLeaves } from "@/mocks/leave";
 
 export default function LeavePage() {
-    const [leaves, setLeaves] =
-        useState<LeaveItem[]>(mockLeaves);
+    const dispatch = useAppDispatch();
+    const { items } = useAppSelector((s) => s.leave);
 
-    const handleSubmit = (data: LeaveFormData) => {
-        setLeaves((prev) => [
-            ...prev,
-            {
-                date: data.date,
-                type:
-                    data.type === "ANNUAL"
-                        ? "success"
-                        : "warning",
-                reason: data.reason,
-            },
-        ]);
-    };
+    useEffect(() => {
+        dispatch(fetchLeaves());
+    }, []);
 
     return (
-        <div className="grid gap-6 md:grid-cols-2">
-            {/* Form */}
-            <div className="rounded bg-white p-6 shadow-sm">
-                <h2 className="mb-4 text-lg font-semibold">
-                    Đăng ký nghỉ phép
-                </h2>
-                <LeaveForm onSubmit={handleSubmit} />
-            </div>
+        <div className="rounded border bg-white p-4">
+            <h2 className="mb-4 text-lg font-semibold">Lịch nghỉ phép</h2>
 
-            {/* Calendar */}
-            <div className="rounded bg-white p-6 shadow-sm">
-                <LeaveCalendar
-                    leaves={leaves}
-                    onSelectDate={() => { }}
-                />
-            </div>
+            <LeaveCalendar
+                leaves={items}
+                onCreateLeave={(data) =>
+                    dispatch(
+                        createLeave({
+                            ...data,
+                            userId: "u1", // TODO: lấy từ auth state
+                        })
+                    )
+                }
+            />
         </div>
     );
 }

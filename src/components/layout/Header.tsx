@@ -22,7 +22,7 @@ export default function Header() {
     );
 
     const unreadCount = notifications.filter(
-        (n) => !n.isRead
+        (n) => !n.read
     ).length;
 
     const [openProfile, setOpenProfile] = useState(false);
@@ -63,7 +63,7 @@ export default function Header() {
     }, []);
 
     return (
-        <header className="border-b bg-white shadow-sm">
+        <header className="sticky top-0 z-50 border-b bg-white shadow-sm">
             <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
                 {/* Logo */}
                 <Link
@@ -74,13 +74,19 @@ export default function Header() {
                 </Link>
 
                 {/* Menu */}
-                <nav className="flex items-center gap-6">
-                    <Link
-                        href="/"
-                        className="text-sm font-medium text-gray-700 hover:text-blue-600"
-                    >
-                        Trang chủ
-                    </Link>
+                <nav className="ml-6 flex items-center gap-6">
+
+                    {isAuthenticated && (
+                        <>
+                            <Link
+                                href="/dashboard"
+                                className="text-sm font-medium text-gray-700 hover:text-blue-600"
+                            >
+                                Dashboard
+                            </Link>
+                        </>
+                    )}
+
                 </nav>
 
                 {/* Auth */}
@@ -153,9 +159,9 @@ export default function Header() {
                                                         key={
                                                             n.id
                                                         }
-                                                        className={`px-4 py-3 text-sm hover:bg-gray-50 ${!n.isRead
-                                                                ? "bg-blue-50"
-                                                                : ""
+                                                        className={`px-4 py-3 text-sm hover:bg-gray-50 ${!n.read
+                                                            ? "bg-blue-50"
+                                                            : ""
                                                             }`}
                                                     >
                                                         {n.title}

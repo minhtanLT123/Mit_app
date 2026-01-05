@@ -1,39 +1,36 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { NotificationItem } from "./notification.types";
 
-interface Notification {
-    id: number;
-    title: string;
-    isRead: boolean;
-}
 
 interface NotificationState {
-    items: Notification[];
+    items: NotificationItem[];
 }
 
 const initialState: NotificationState = {
-    items: [
-        {
-            id: 1,
-            title: "📢 Thông báo nghỉ lễ 2/9",
-            isRead: false,
-        },
-        {
-            id: 2,
-            title: "📄 Chính sách OT mới",
-            isRead: false,
-        },
-    ],
+    items: [],
 };
 
 const notificationSlice = createSlice({
     name: "notification",
     initialState,
     reducers: {
+        pushNotification(
+            state,
+            action: PayloadAction<NotificationItem>
+        ) {
+            state.items.unshift(action.payload);
+        },
         markAllRead(state) {
-            state.items.forEach((n) => (n.isRead = true));
+            state.items.forEach(
+                (n) => (n.read = true)
+            );
         },
     },
 });
 
-export const { markAllRead } = notificationSlice.actions;
+export const {
+    pushNotification,
+    markAllRead,
+} = notificationSlice.actions;
+
 export default notificationSlice.reducer;
